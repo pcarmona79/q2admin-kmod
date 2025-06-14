@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 
 #include "g_local.h"
+#include "q_shared.h"
+#include <stdio.h>
 
 #ifdef __GNUC__
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
@@ -176,6 +178,10 @@ game_export_t *GetGameAPI(game_import_t *import)
 	rcon_password = gi.cvar("rcon_password", "", 0) ; // UPDATE
 	q2admintxt = gi.cvar("q2admintxt", "", 0);
 	q2adminbantxt = gi.cvar("q2adminbantxt", "", 0);
+
+	// kernel: q2pro directories
+	sys_homedir = gi.cvar("homedir", "", CVAR_NOSET);
+	sys_libdir = gi.cvar("libdir", "", CVAR_NOSET);
 	
 	gamedir = gi.cvar ("game", "baseq2", 0);
 	q2a_strcpy(moddir, gamedir->string);
@@ -233,8 +239,27 @@ game_export_t *GetGameAPI(game_import_t *import)
 	
 #ifdef __GNUC__
 	loadtype = soloadlazy ? RTLD_LAZY : RTLD_NOW;
-	sprintf(dllname, "%s/%s", moddir, DLLNAME);
-	hdll = dlopen(dllname, loadtype);
+
+	// kernel: try to load from q2pro directories
+	if (sys_homedir->string[0])
+	{
+		sprintf(dllname, "%s/%s/%s", sys_homedir->string, moddir, DLLNAME);
+		hdll = dlopen(dllname, loadtype);
+	}
+
+	// kernel: try libdir instead
+	if (hdll == NULL && sys_libdir->string[0])
+	{
+		sprintf(dllname, "%s/%s/%s", sys_libdir->string, moddir, DLLNAME);
+		hdll = dlopen(dllname, loadtype);
+	}
+
+	// kernel: if all failed then try local directory
+	if (hdll == NULL)
+	{
+		sprintf(dllname, "%s/%s", moddir, DLLNAME);
+		hdll = dlopen(dllname, loadtype);
+	}
 #elif defined(WIN32)
 	if (quake2dirsupport)
 		{
@@ -288,7 +313,8 @@ game_export_t *GetGameAPI(game_import_t *import)
 					gi.dprintf ("Unable to load DLL %s, loading baseq2 DLL.\n", dllname);
 				}
 		}
-		
+	gi.dprintf("Loaded game DLL %s.\n", dllname);
+
 #ifdef __GNUC__
 	getapi = (GAMEAPI *)dlsym(hdll, "GetGameAPI");
 #elif defined(WIN32)

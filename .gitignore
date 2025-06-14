@@ -10,3 +10,6 @@ ipch/
 *.suo
 *.vcxproj.user
 .vs/
+compile_commands.json
+.cache/
+.vscode/
