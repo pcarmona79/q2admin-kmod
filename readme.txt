@@ -1,9 +1,12 @@
 
-Version: q2admin1.17.48-tsmod-2
+Version: q2admin 1.17.49-kmod
 
-This is Q2Admin with R1CH's security patches applied, and a couple tweaks
-to prevent kicking of players for false positives (Q2Admin would think a
-player was a bot when they were merely lagging badly.)
+This is Q2Admin is based on TastySpleen version, adding some patches to
+support Q2PRO directories.
+
+The TastySpleen version is Q2Admin with R1CH's security patches applied, and
+a couple tweaks to prevent kicking of players for false positives (Q2Admin
+would think a player was a bot when they were merely lagging badly.)
 
 Original Q2Admin readme.txt follows:
 
