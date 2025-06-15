@@ -27,6 +27,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 
 // g_local.h -- local definitions for game module
+
+#ifndef __G_LOCAL_H__
+#define __G_LOCAL_H__
+
 #include "q_shared.h"
 
 // define GAME_INCLUDE so that game.h does not define the
@@ -819,6 +823,7 @@ extern game_import_t gi;
 extern game_export_t globals;
 extern game_export_t *dllglobals;
 extern cvar_t   *rcon_password, *gamedir, *maxclients, *logfile, *rconpassword, *port, *q2admintxt, *q2adminbantxt; // UPDATE
+extern cvar_t *sys_homedir, *sys_libdir; // kernel: to get q2pro default directories
 
 extern char    dllname[512];
 extern char    zbotuserdisplay[256];
@@ -1297,7 +1302,7 @@ typedef struct
 	int   level;
 } admin_type;
 
-#define Q2ADMINVERSION   "1.17.48-tsmod-2"
+#define Q2ADMINVERSION   "1.17.49-kmod"
 #define DEFAULTQ2AVER   "1.0"
 #define DEFAULTQ2AMSG   "\nThis server requires %s anti cheat client.\n"
 #define MAX_ADMINS    128
@@ -1387,3 +1392,5 @@ typedef struct block_model_s
 
 extern block_model block_models[MAX_BLOCK_MODELS];
 //*** UPDATE END ***
+
+#endif /* __G_LOCAL_H__ */

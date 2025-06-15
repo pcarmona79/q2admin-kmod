@@ -33,6 +33,7 @@ game_export_t  globals;
 game_export_t  *dllglobals;
 
 cvar_t  *rcon_password, *gamedir, *maxclients, *logfile, *rconpassword, *port, *q2admintxt, *q2adminbantxt;	// UPDATE
+cvar_t *sys_homedir, *sys_libdir; // kernel: to get q2pro default directories
 
 qboolean quake2dirsupport = TRUE;
 
