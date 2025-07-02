@@ -1670,15 +1670,7 @@ void banRun(int startarg, edict_t *ent, int client)
 				{
 					FILE *banlistfptr;
 					
-					if(save == 1)
-					{
-						banlistfptr = openQ2AFile(BANLISTFILE, "at");
-					}
-					else
-					{
-						banlistfptr = openQ2AModFile(BANLISTFILE, "at");
-					}
-						
+					banlistfptr = openQ2AModFile(BANLISTFILE, "at");
 					if(!banlistfptr)
 						{
 							gi.cprintf(ent, PRINT_HIGH, "Error opening banfile!\n");
@@ -2389,15 +2381,7 @@ void chatbanRun(int startarg, edict_t *ent, int client)
 		{
 			FILE *banlistfptr;
 			
-			if(save == 1)
-			{
-				banlistfptr = openQ2AFile(buffer, "at");
-			}
-			else
-			{
-				banlistfptr = openQ2AModFile(buffer, "at");
-			}
-				
+			banlistfptr = openQ2AModFile(buffer, "at");
 			if(!banlistfptr)
 				{
 					gi.cprintf(ent, PRINT_HIGH, "Error opening banfile!\n");

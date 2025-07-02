@@ -534,15 +534,8 @@ void logEvent(enum zb_logtypesenum ltype, int client, edict_t *ent, char *messag
 				{
 					if((logtypes[(int)ltype].logfiles & logfile) && logFiles[i].inuse)
 						{
-							if(logFiles[i].mod)
-							{
-								logfilePtr = openQ2AModFile(logFiles[i].filename, "at");
-							}
-							else
-							{
-								logfilePtr = openQ2AFile(logFiles[i].filename, "at");
-							}
-								
+							logfilePtr = openQ2AModFile(logFiles[i].filename, "at");
+
 							if(logfilePtr)
 							{
 								fprintf(logfilePtr, "%s\n", logline);
@@ -592,14 +585,7 @@ void displayLogFileCont(edict_t *ent, int client, long logfilereadpos)
 	char logline[4096];
 	FILE *logfilePtr;
 	
-	if(logFiles[logNum].mod)
-	{
-		logfilePtr = openQ2AModFile(logFiles[logNum].filename, "rt");
-	}
-	else
-	{
-		logfilePtr = openQ2AFile(logFiles[logNum].filename, "rt");
-	}
+	logfilePtr = openQ2AModFile(logFiles[logNum].filename, "rt");
 
 	if(logfilePtr)
 		{
@@ -645,15 +631,8 @@ void clearlogfileRun(int startarg, edict_t *ent, int client)
 				{
 					FILE *logfilePtr;
 					
-					if(logFiles[logToDisplay].mod)
-						{
-							logfilePtr = openQ2AModFile(logFiles[logToDisplay].filename, "w+t");
-						}
-					else
-						{
-							logfilePtr = openQ2AFile(logFiles[logToDisplay].filename, "w+t");
-						}
-						
+					logfilePtr = openQ2AModFile(logFiles[logToDisplay].filename, "w+t");
+
 					if(!logfilePtr)
 						{
 							gi.cprintf (ent, PRINT_HIGH, "logfilename \"%s\" couldn't be opened!\n", logFiles[logToDisplay].filename);
