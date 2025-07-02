@@ -180,8 +180,9 @@ game_export_t *GetGameAPI(game_import_t *import)
 	q2adminbantxt = gi.cvar("q2adminbantxt", "", 0);
 
 	// kernel: q2pro directories
-	sys_homedir = gi.cvar("homedir", "", CVAR_NOSET);
-	sys_libdir = gi.cvar("libdir", "", CVAR_NOSET);
+	sys_homedir = gi.cvar("homedir", ".", CVAR_NOSET);
+	sys_basedir = gi.cvar("basedir", ".", CVAR_NOSET);
+	sys_libdir = gi.cvar("libdir", ".", CVAR_NOSET);
 	
 	gamedir = gi.cvar ("game", "baseq2", 0);
 	q2a_strcpy(moddir, gamedir->string);
@@ -241,23 +242,23 @@ game_export_t *GetGameAPI(game_import_t *import)
 	loadtype = soloadlazy ? RTLD_LAZY : RTLD_NOW;
 
 	// kernel: try to load from q2pro directories
-	if (sys_homedir->string[0])
-	{
-		sprintf(dllname, "%s/%s/%s", sys_homedir->string, moddir, DLLNAME);
-		hdll = dlopen(dllname, loadtype);
-	}
+	if (snprintf(dllname, 512, "%s/%s/%s", sys_homedir->string, moddir, DLLNAME) >= 512)
+		gi.dprintf("GetGameAPI: dllname for homedir truncated\n");
+	hdll = dlopen(dllname, loadtype);
 
 	// kernel: try libdir instead
-	if (hdll == NULL && sys_libdir->string[0])
+	if (hdll == NULL)
 	{
-		sprintf(dllname, "%s/%s/%s", sys_libdir->string, moddir, DLLNAME);
+		if (snprintf(dllname, 512, "%s/%s/%s", sys_libdir->string, moddir, DLLNAME) >= 512)
+			gi.dprintf("GetGameAPI: dllname for libdir truncated\n");
 		hdll = dlopen(dllname, loadtype);
 	}
 
 	// kernel: if all failed then try local directory
 	if (hdll == NULL)
 	{
-		sprintf(dllname, "%s/%s", moddir, DLLNAME);
+		if (snprintf(dllname, 512, "%s/%s", moddir, DLLNAME) >= 512)
+			gi.dprintf("GetGameAPI: dllname for current dir truncated\n");
 		hdll = dlopen(dllname, loadtype);
 	}
 #elif defined(WIN32)

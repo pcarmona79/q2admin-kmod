@@ -33,7 +33,7 @@ game_export_t  globals;
 game_export_t  *dllglobals;
 
 cvar_t  *rcon_password, *gamedir, *maxclients, *logfile, *rconpassword, *port, *q2admintxt, *q2adminbantxt;	// UPDATE
-cvar_t *sys_homedir, *sys_libdir; // kernel: to get q2pro default directories
+cvar_t *sys_homedir, *sys_basedir, *sys_libdir; // kernel: to get q2pro default directories
 
 qboolean quake2dirsupport = TRUE;
 
@@ -566,7 +566,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	motd[0] = 0;
 	if(zbotmotd[0])
 		{
-			motdptr = fopen(zbotmotd, "rt");
+			motdptr = openQ2AFile(zbotmotd, "rt");
 			
 			if(!motdptr)
 				{
@@ -603,8 +603,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	if(spawnentities_enable)
 		{
 			readSpawnLists();
-			q2a_strcpy(buffer, moddir);
-			q2a_strcat(buffer, "/q2adminmaps/");
+			q2a_strcpy(buffer, "q2adminmaps/");
 			q2a_strcat(buffer, mapname);
 			q2a_strcat(buffer, ".q2aspawn");
 			ReadSpawnFile(buffer, TRUE);
@@ -2026,8 +2025,7 @@ void ClientBegin (edict_t *ent)
 				
 			addCmdQueue(client, QCMD_CHECKVARTESTS, (float)checkvar_poll_time, 0, 0);
 			
-			sprintf(buffer, "%s/qconsole.log", moddir);
-			q2logfile = fopen(buffer, "rt");
+			q2logfile = openQ2AModFile("qconsole.log", "rt");
 			if(q2logfile)
 				{
 					fseek(q2logfile, 0, SEEK_END);

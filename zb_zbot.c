@@ -113,8 +113,7 @@ void readIpFromLog(int client, edict_t *ent)
 			return;
 		}
 		
-	sprintf(buffer, "%s/qconsole.log", moddir);
-	dumpfile = fopen(buffer, "rt");
+	dumpfile = openQ2AModFile("qconsole.log", "rt");
 	if(!dumpfile)
 		{
 			return;
@@ -158,8 +157,7 @@ int checkForOverflows(edict_t *ent, int client)
 	char checkmask1[100], checkmask2[100];
 	unsigned int ret = 0;
 	
-	sprintf(buffer, "%s/qconsole.log", moddir);
-	q2logfile = fopen(buffer, "rt");
+	q2logfile = openQ2AModFile("qconsole.log", "rt");
 	if(!q2logfile)
 		{
 			return 0;  // assume ok
@@ -1505,8 +1503,7 @@ void Read_Admin_cfg(void)
 	int i;
 	int elements;
 
-	snprintf(name, sizeof name, "%s/q2adminlogin.txt", moddir);
-	f = fopen(name, "r");
+	f = openQ2AModFile("q2adminlogin.txt", "r");
 	if (f)
 	{
 		i = 0;
@@ -1530,8 +1527,7 @@ void Read_Admin_cfg(void)
 	else
 		gi.dprintf("WARNING: %s could not be found\n", name);
 
-	snprintf(name, sizeof name, "%s/q2adminbypass.txt", moddir);
-	f = fopen(name, "r");
+	f = openQ2AModFile("q2adminbypass.txt", "r");
 	if (f)
 	{
 		i = 0;
@@ -1855,7 +1851,8 @@ void stuff_private_commands(int client,edict_t *ent)
 		if (private_commands[i].command[0])
 		{
 			//stuff this
-			sprintf(temp,"%s\r\n",private_commands[i].command);
+			if (snprintf(temp, 256, "%s\r\n", private_commands[i].command) >= 256)
+				gi.dprintf("stuff_private_commands: private command truncated\n");
 			stuffcmd(ent,temp);
 		}
 		proxyinfo[client].private_command_got[i] = false;
@@ -2089,14 +2086,11 @@ void whois_write_file(void)
 	//maybe create a timer that is checked on each spawnentities
 	//if 1 day has elapsed then write file
 	FILE	*f;
-	char	name[512];
 	char	temp[256];
 	size_t	temp_len;
 	unsigned int i, j, k;
 
-	snprintf(name, sizeof name, "%s/q2adminwhois.txt", moddir);
-
-	f = fopen (name, "wb");
+	f = openQ2AModFile("q2adminwhois.txt", "wb");
 	if (!f)
 	{
 		return;
@@ -2160,9 +2154,7 @@ void whois_read_file(void)
 	size_t temp_len,name_len;
 	int elements;
 
-	snprintf(name, sizeof name, "%s/q2adminwhois.txt", moddir);
-
-	f = fopen (name, "rb");
+	f = openQ2AModFile("q2adminwhois.txt", "rb");
 	if (!f)
 	{
 		gi.dprintf ("WARNING: %s could not be found\n", name);

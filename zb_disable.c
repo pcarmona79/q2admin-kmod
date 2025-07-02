@@ -62,7 +62,7 @@ qboolean ReadDisableFile(char *disablename)
 			return FALSE;
 		}
 		
-	disablefile = fopen(disablename, "rt");
+	disablefile = openQ2AModFile(disablename, "rt");
 	if(!disablefile)
 		{
 			return FALSE;
@@ -181,13 +181,6 @@ void readDisableLists(void)
 	freeDisableLists();
 	
 	ret = ReadDisableFile(DISABLEFILE);
-	
-	sprintf(buffer, "%s/%s", moddir, DISABLEFILE);
-	if(ReadDisableFile(buffer))
-		{
-			ret = TRUE;
-		}
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " DISABLEFILE " could not be found\n");

@@ -404,3 +404,57 @@ void q_strupr(char* c)
 		c++;
 	}
 }
+
+
+FILE *openFullPathFile(const char *path, const char *gamedir, const char *name, const char *mode)
+{
+	char filename[256];
+
+	if (snprintf(filename, 256, "%s/%s/%s", path, gamedir, name) >= 256)
+		gi.dprintf("openFullPathFile: filename truncated\n");
+
+	return fopen(filename, mode);
+}
+
+
+FILE *openPathFile(const char *path, const char *name, const char *mode)
+{
+	char filename[256];
+
+	if (snprintf(filename, 256, "%s/%s", path, name) >= 256)
+		gi.dprintf("openPathFile: filename truncated\n");
+
+	return fopen(filename, mode);
+}
+
+
+FILE *openQ2AModFile(const char *name, const char *mode)
+{
+	FILE *file;
+
+	file = openFullPathFile(sys_homedir->string, moddir, name, mode);
+
+	if (!file)
+		file = openFullPathFile(sys_basedir->string, moddir, name, mode);
+
+	if (!file)
+		file = openFullPathFile(".", moddir, name, mode);
+
+	return file;
+}
+
+
+FILE *openQ2AFile(const char *name, const char *mode)
+{
+	FILE *file;
+
+	file = openPathFile(sys_homedir->string, name, mode);
+
+	if (!file)
+		file = openPathFile(sys_basedir->string, name, mode);
+
+	if (!file)
+		file = openPathFile(".", name, mode);
+
+	return file;
+}

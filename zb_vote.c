@@ -77,7 +77,7 @@ qboolean ReadVoteFile(char *votename)
 			return FALSE;
 		}
 		
-	votefile = fopen(votename, "rt");
+	votefile = openQ2AModFile(votename, "rt");
 	if(!votefile)
 		{
 			return FALSE;
@@ -195,13 +195,6 @@ void readVoteLists(void)
 	freeVoteLists();
 	
 	ret = ReadVoteFile(VOTEFILE);
-	
-	sprintf(buffer, "%s/%s", moddir, VOTEFILE);
-	if(ReadVoteFile(buffer))
-		{
-			ret = TRUE;
-		}
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " VOTEFILE " could not be found\n");

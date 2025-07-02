@@ -66,7 +66,7 @@ qboolean ReadSpawnFile(char *spawnname, qboolean onelevelflag)
 			return FALSE;
 		}
 		
-	spawnfile = fopen(spawnname, "rt");
+	spawnfile = openQ2AModFile(spawnname, "rt");
 	if(!spawnfile)
 		{
 			return FALSE;
@@ -217,13 +217,6 @@ void readSpawnLists(void)
 	freeSpawnLists();
 	
 	ret = ReadSpawnFile(SPAWNFILE, FALSE);
-	
-	sprintf(buffer, "%s/%s", moddir, SPAWNFILE);
-	if(ReadSpawnFile(buffer, FALSE))
-		{
-			ret = TRUE;
-		}
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " SPAWNFILE " could not be found\n");

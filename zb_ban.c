@@ -55,8 +55,8 @@ qboolean ReadBanFile(char *bfname)
 	chatbaninfo_t *cnewentry;
 	char strbuffer[256];
 	unsigned int uptoLine = 0;
-	
-	banfile = fopen(bfname, "rt");
+
+	banfile = openQ2AModFile(bfname, "rt");
 	if(!banfile)
 		{
 			return FALSE;
@@ -742,13 +742,6 @@ void readBanLists(void)
 	freeBanLists();
 	
 	ret = ReadBanFile(cfgFile);
-	
-	sprintf(buffer, "%s/%s", moddir, cfgFile);
-	if(ReadBanFile(buffer))
-		{
-			ret = TRUE;
-		}
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " BANLISTFILE " could not be found\n");
@@ -1678,15 +1671,14 @@ void banRun(int startarg, edict_t *ent, int client)
 					FILE *banlistfptr;
 					
 					if(save == 1)
-						{
-							q2a_strcpy(buffer, BANLISTFILE);
-						}
+					{
+						banlistfptr = openQ2AFile(BANLISTFILE, "at");
+					}
 					else
-						{
-							sprintf(buffer, "%s/%s", moddir, BANLISTFILE);
-						}
+					{
+						banlistfptr = openQ2AModFile(BANLISTFILE, "at");
+					}
 						
-					banlistfptr = fopen(buffer, "at");
 					if(!banlistfptr)
 						{
 							gi.cprintf(ent, PRINT_HIGH, "Error opening banfile!\n");
@@ -2398,15 +2390,14 @@ void chatbanRun(int startarg, edict_t *ent, int client)
 			FILE *banlistfptr;
 			
 			if(save == 1)
-				{
-					q2a_strcpy(buffer, BANLISTFILE);
-				}
+			{
+				banlistfptr = openQ2AFile(buffer, "at");
+			}
 			else
-				{
-					sprintf(buffer, "%s/%s", moddir, BANLISTFILE);
-				}
+			{
+				banlistfptr = openQ2AModFile(buffer, "at");
+			}
 				
-			banlistfptr = fopen(buffer, "at");
 			if(!banlistfptr)
 				{
 					gi.cprintf(ent, PRINT_HIGH, "Error opening banfile!\n");

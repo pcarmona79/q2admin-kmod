@@ -67,7 +67,7 @@ qboolean ReadLRconFile(char *lrcname)
 			return FALSE;
 		}
 		
-	lrconfile = fopen(lrcname, "rt");
+	lrconfile = openQ2AModFile(lrcname, "rt");
 	if(!lrconfile)
 		{
 			return FALSE;
@@ -216,13 +216,6 @@ void readLRconLists(void)
 	freeLRconLists();
 	
 	ret = ReadLRconFile(LRCONFILE);
-	
-	sprintf(buffer, "%s/%s", moddir, LRCONFILE);
-	if(ReadLRconFile(buffer))
-		{
-			ret = TRUE;
-		}
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " LRCONFILE " could not be found\n");

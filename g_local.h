@@ -823,7 +823,7 @@ extern game_import_t gi;
 extern game_export_t globals;
 extern game_export_t *dllglobals;
 extern cvar_t   *rcon_password, *gamedir, *maxclients, *logfile, *rconpassword, *port, *q2admintxt, *q2adminbantxt; // UPDATE
-extern cvar_t *sys_homedir, *sys_libdir; // kernel: to get q2pro default directories
+extern cvar_t *sys_homedir, *sys_basedir, *sys_libdir; // kernel: to get q2pro default directories
 
 extern char    dllname[512];
 extern char    zbotuserdisplay[256];
@@ -1144,6 +1144,8 @@ char  *processstring(char *output, char *input, int max, char end);
 qboolean getLogicalValue(char *arg);
 int   getLastLine(char *buffer, FILE *dumpfile, long *fpos);
 void  q_strupr(char *c);
+FILE *openQ2AModFile(const char *name, const char *mode);
+FILE *openQ2AFile(const char *name, const char *mode);
 
 // zb_ban.c
 void  banRun(int startarg, edict_t *ent, int client);

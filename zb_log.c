@@ -174,7 +174,7 @@ qboolean loadLogListFile(char *filename)
 	unsigned int i, uptoLine = 0;
 	int lognum;
 	
-	loglist = fopen(filename, "rt");
+	loglist = openQ2AModFile(filename, "rt");
 	if(!loglist)
 		{
 			return FALSE;
@@ -199,7 +199,7 @@ qboolean loadLogListFile(char *filename)
 							
 							lognum = q2a_atoi(cp);
 							
-							if(lognum >= 1 || lognum <= 32)
+							if(lognum >= 1 && lognum <= 32)
 								{
 									lognum--;
 									
@@ -272,7 +272,7 @@ qboolean loadLogListFile(char *filename)
 													lognum = q2a_atoi(cp);
 													logtypes[i].log = FALSE;
 													
-													if(lognum >= 1 || lognum <= 32)
+													if(lognum >= 1 && lognum <= 32)
 														{
 															lognum--;
 															
@@ -292,7 +292,7 @@ qboolean loadLogListFile(char *filename)
 																	
 																	lognum = q2a_atoi(cp);
 																	
-																	if(lognum >= 1 || lognum <= 32)
+																	if(lognum >= 1 && lognum <= 32)
 																		{
 																			lognum--;
 																			
@@ -370,14 +370,6 @@ void loadLogList(void)
 		}
 		
 	ret = loadLogListFile(LOGLISTFILE);
-	
-	sprintf(buffer, "%s/%s", moddir, LOGLISTFILE);
-	if(loadLogListFile(buffer))
-		{
-			ret = TRUE;
-		}
-		
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " LOGLISTFILE " could not be found\n");
@@ -531,7 +523,6 @@ void logEvent(enum zb_logtypesenum ltype, int client, edict_t *ent, char *messag
 	if(logtypes[(int)ltype].log)
 		{
 			char logline[4096];
-			char logname[356];
 			unsigned long logfile;
 			unsigned int i;
 			FILE *logfilePtr;
@@ -544,21 +535,19 @@ void logEvent(enum zb_logtypesenum ltype, int client, edict_t *ent, char *messag
 					if((logtypes[(int)ltype].logfiles & logfile) && logFiles[i].inuse)
 						{
 							if(logFiles[i].mod)
-								{
-									sprintf(logname, "%s/%s", moddir, logFiles[i].filename);
-								}
+							{
+								logfilePtr = openQ2AModFile(logFiles[i].filename, "at");
+							}
 							else
-								{
-									q2a_strcpy(logname, logFiles[i].filename);
-								}
+							{
+								logfilePtr = openQ2AFile(logFiles[i].filename, "at");
+							}
 								
-							logfilePtr = fopen(logname, "at");
-							
 							if(logfilePtr)
-								{
-									fprintf(logfilePtr, "%s\n", logline);
-									fclose(logfilePtr);
-								}
+							{
+								fprintf(logfilePtr, "%s\n", logline);
+								fclose(logfilePtr);
+							}
 						}
 				}
 		}
@@ -600,21 +589,18 @@ void displaylogfileRun(int startarg, edict_t *ent, int client)
 void displayLogFileCont(edict_t *ent, int client, long logfilereadpos)
 {
 	int logNum = proxyinfo[client].logfilenum;
-	char logname[356];
 	char logline[4096];
 	FILE *logfilePtr;
 	
 	if(logFiles[logNum].mod)
-		{
-			sprintf(logname, "%s/%s", moddir, logFiles[logNum].filename);
-		}
+	{
+		logfilePtr = openQ2AModFile(logFiles[logNum].filename, "rt");
+	}
 	else
-		{
-			q2a_strcpy(logname, logFiles[logNum].filename);
-		}
-		
-	logfilePtr = fopen(logname, "rt");
-	
+	{
+		logfilePtr = openQ2AFile(logFiles[logNum].filename, "rt");
+	}
+
 	if(logfilePtr)
 		{
 			fseek(logfilePtr, logfilereadpos, SEEK_SET);
@@ -657,19 +643,17 @@ void clearlogfileRun(int startarg, edict_t *ent, int client)
 			
 			if(logFiles[logToDisplay].inuse)
 				{
-					char logname[356];
 					FILE *logfilePtr;
 					
 					if(logFiles[logToDisplay].mod)
 						{
-							sprintf(logname, "%s/%s", moddir, logFiles[logToDisplay].filename);
+							logfilePtr = openQ2AModFile(logFiles[logToDisplay].filename, "w+t");
 						}
 					else
 						{
-							q2a_strcpy(logname, logFiles[logToDisplay].filename);
+							logfilePtr = openQ2AFile(logFiles[logToDisplay].filename, "w+t");
 						}
 						
-					logfilePtr = fopen(logname, "w+t");
 					if(!logfilePtr)
 						{
 							gi.cprintf (ent, PRINT_HIGH, "logfilename \"%s\" couldn't be opened!\n", logFiles[logToDisplay].filename);
@@ -938,7 +922,7 @@ void logeventRun(int startarg, edict_t *ent, int client)
 									
 									lognum = q2a_atoi(cmd);
 									
-									if(lognum >= 1 || lognum <= 32)
+									if(lognum >= 1 && lognum <= 32)
 										{
 											lognum--;
 											
@@ -963,7 +947,7 @@ void logeventRun(int startarg, edict_t *ent, int client)
 														
 													lognum = q2a_atoi(cmd);
 													
-													if(lognum >= 1 || lognum <= 32)
+													if(lognum >= 1 && lognum <= 32)
 														{
 															lognum--;
 															
