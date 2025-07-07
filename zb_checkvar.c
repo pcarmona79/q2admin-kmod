@@ -59,7 +59,7 @@ qboolean ReadCheckVarFile(char *checkvarname)
 			return FALSE;
 		}
 		
-	checkvarfile = fopen(checkvarname, "rt");
+	checkvarfile = openQ2AModFile(checkvarname, "rt");
 	if(!checkvarfile)
 		{
 			return FALSE;
@@ -210,13 +210,6 @@ void readCheckVarLists(void)
 	
 	maxcheckvars = 0;
 	ret = ReadCheckVarFile(CHECKVARFILE);
-	
-	sprintf(buffer, "%s/%s", moddir, CHECKVARFILE);
-	if(ReadCheckVarFile(buffer))
-		{
-			ret = TRUE;
-		}
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " CHECKVARFILE " could not be found\n");

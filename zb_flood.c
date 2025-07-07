@@ -60,7 +60,7 @@ qboolean ReadFloodFile(char *floodname)
 			return FALSE;
 		}
 		
-	floodfile = fopen(floodname, "rt");
+	floodfile = openQ2AModFile(floodname, "rt");
 	if(!floodfile)
 		{
 			return FALSE;
@@ -176,13 +176,6 @@ void readFloodLists(void)
 	freeFloodLists();
 	
 	ret = ReadFloodFile(FLOODFILE);
-	
-	sprintf(buffer, "%s/%s", moddir, FLOODFILE);
-	if(ReadFloodFile(buffer))
-		{
-			ret = TRUE;
-		}
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " FLOODFILE " could not be found\n");

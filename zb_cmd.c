@@ -1762,7 +1762,7 @@ qboolean readCfgFile(char *cfgfilename)
 	char buff1[256];
 	char buff2[256];
 	
-	cfgfile = fopen(cfgfilename, "rt");
+	cfgfile = openQ2AModFile(cfgfilename, "rt");
 	if(!cfgfile) return FALSE;
 	
 	while(fgets(buffer, 256, cfgfile) != NULL)
@@ -1828,13 +1828,6 @@ void readCfgFiles(void)
 		}
 		
 	ret = readCfgFile(cfgFile);
-	
-	sprintf(buffer, "%s/%s", moddir, cfgFile);
-	if(readCfgFile(buffer))
-		{
-			ret = TRUE;
-		}
-		
 	if(!ret)
 		{
 			gi.dprintf ("WARNING: " CFGFILE " could not be found\n");
@@ -3992,7 +3985,7 @@ void zbotmotdRun(int startarg, edict_t *ent, int client)
 			
 			processstring(zbotmotd, gi.argv(startarg), sizeof(zbotmotd), 0);
 			
-			motdptr = fopen(zbotmotd, "rt");
+			motdptr = openQ2AFile(zbotmotd, "rt");
 			
 			if(!motdptr)
 				{
@@ -4069,7 +4062,7 @@ void stuffClientRun(int startarg, edict_t *ent, int client)
 						
 					processstring(buffer, text, sizeof(buffer) - 1, 0);
 					
-					proxyinfo[clienti].stuffFile = fopen(buffer, "rt");
+					proxyinfo[clienti].stuffFile = openQ2AModFile(buffer, "rt");
 					
 					if(proxyinfo[clienti].stuffFile)
 						{
