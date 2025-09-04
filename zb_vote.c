@@ -469,7 +469,7 @@ void displayVote(void)
 						{
 							// just display the stat's
 							gi.centerprintf(getEnt((client + 1)), "Vote Summary So Far:\n"
-											"Proposed Vote: %s by %s\n"	//UPDATE
+											"Proposed Vote: %s by %s\n\n"	//UPDATE kernel: add extra new line
 											"Voted Yes: %d    Voted No: %d\n"
 											"Haven't Voted Yet: %d\n", cmdvote, votecaller, voteyes, voteno, novote);	//UPDATE
 						}
@@ -480,7 +480,7 @@ void displayVote(void)
 											"console type '%s yes' or '%s no'\n"
 											"\n"
 											"Vote Summary So Far:\n"
-											"Proposed Vote: %s by %s\n"	//UPDATE
+											"Proposed Vote: %s by %s\n\n"	//UPDATE kernel: add extra new line
 											"Voted Yes: %d    Voted No: %d\n"
 											"Haven't Voted Yet: %d\n", clientVoteCommand, clientVoteCommand,
 											cmdvote, votecaller, voteyes, voteno, novote);	//UPDATE
@@ -680,7 +680,6 @@ void run_vote(edict_t *ent, int client)
 			q2a_strcat(cmdvote, "\n");
 			//*** UPDATE START ***
 			q2a_strcpy(votecaller,proxyinfo[client].name);
-			q2a_strcat(votecaller, "\n");
 			//*** UPDATE END ***
 			
 			displayVote();
