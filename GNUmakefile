@@ -17,14 +17,12 @@ ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/ar
 
 CC = gcc -std=c99 -Wall
 
-cc = gcc
+# uncomment for ARM64 cross-compilation
+#ARCH=aarch64
+#CC=aarch64-linux-gnu-gcc -std=c99 -Wall
 
-CFLAGS =-O3 -fPIC -DARCH="$(ARCH)" -D__$(ARCH)__ -DLINUX -DSTDC_HEADERS -I/usr/include
-LDFLAGS = -ldl -lm -shared
-
-ifeq ($(ARCH),i386)
-CFLAGS =-m32 -O3 -fPIC -DARCH="$(ARCH)" -D__$(ARCH)__ -DLINUX -DSTDC_HEADERS -I/usr/include
-endif
+CFLAGS_BASE :=-fPIC -DARCH="$(ARCH)" -D__$(ARCH)__ -DLINUX -DSTDC_HEADERS -I/usr/include
+LDFLAGS =-ldl -lm -shared
 
 # Msys2 on Windows for MinGW
 ifeq ($(shell uname -o),Msys)
@@ -34,29 +32,41 @@ endif
 # flavors of Linux
 ifeq ($(shell uname),Linux)
 #SVNDEV := -D'SVN_REV="$(shell svnversion -n .)"'
-#CFLAGS += $(SVNDEV)
-CFLAGS += -DLINUX
+#CFLAGS_BASE += $(SVNDEV)
+CFLAGS_BASE += -DLINUX
 LIBTOOL = ldd
 endif
 
 # OS X wants to be Linux and FreeBSD too.
 ifeq ($(shell uname),Darwin)
 #SVNDEV := -D'SVN_REV="$(shell svnversion -n .)"'
-#CFLAGS += $(SVNDEV)
-CFLAGS += -DLINUX
+#CFLAGS_BASE += $(SVNDEV)
+CFLAGS_BASE += -DLINUX
 LIBTOOL = otool
 endif
 
-# uncomment for ARM64 cross-compilation
-#ARCH=aarch64
-#CC=aarch64-linux-gnu-gcc -std=c99 -Wall
+ifeq ($(ARCH),i386)
+  CFLAGS_RELEASE := -m32 -O3 $(CFLAGS_BASE)
+else
+  CFLAGS_RELEASE := -O3 $(CFLAGS_BASE)
+endif
+CFLAGS_DEBUG := -g $(CFLAGS_BASE)
+
+build_release:
+	$(MAKE) game$(ARCH).so CFLAGS="$(CFLAGS_RELEASE)"
+
+build_debug:
+	$(MAKE) game$(ARCH).so CFLAGS="$(CFLAGS_DEBUG)"
+
+.c.o:
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 OUTFILES = g_main.o zb_spawn.o zb_vote.o zb_ban.o zb_cmd.o zb_flood.o \
 	zb_init.o zb_log.o zb_lrcon.o zb_msgqueue.o zb_util.o zb_zbot.o \
 	zb_zbotcheck.o zb_disable.o zb_checkvar.o
 
 game$(ARCH).so: $(OUTFILES)
-	$(CC) $(CFLAGS) $(OUTFILES) $(LDFLAGS) -o game$(ARCH).so
+	$(CC) $(OUTFILES) $(LDFLAGS) -o game$(ARCH).so
 #	$(LIBTOOL) -r $@
 
 zip: game$(ARCH).so
@@ -66,12 +76,25 @@ zip: game$(ARCH).so
 clean:
 	rm -f $(OUTFILES) game$(ARCH).so
 
-depends:
-	$(CC) $(CFLAGS) -MM *.c > dependencies
+all: build_release
 
-all:
-	make clean
-	make depends
-	make
+# dependencies
+g_main.o: g_main.c g_local.h q_shared.h game.h
+regex.o: regex.c g_local.h q_shared.h game.h regex.h
+zb_ban.o: zb_ban.c g_local.h q_shared.h game.h
+zb_checkvar.o: zb_checkvar.c g_local.h q_shared.h game.h
+zb_clib.o: zb_clib.c g_local.h q_shared.h game.h
+zb_cmd.o: zb_cmd.c g_local.h q_shared.h game.h
+zb_disable.o: zb_disable.c g_local.h q_shared.h game.h
+zb_flood.o: zb_flood.c g_local.h q_shared.h game.h
+zb_init.o: zb_init.c g_local.h q_shared.h game.h
+zb_log.o: zb_log.c g_local.h q_shared.h game.h
+zb_lrcon.o: zb_lrcon.c g_local.h q_shared.h game.h
+zb_msgqueue.o: zb_msgqueue.c g_local.h q_shared.h game.h
+zb_spawn.o: zb_spawn.c g_local.h q_shared.h game.h
+zb_util.o: zb_util.c g_local.h q_shared.h game.h
+zb_vote.o: zb_vote.c g_local.h q_shared.h game.h
+zb_zbot.o: zb_zbot.c g_local.h q_shared.h game.h
+zb_zbotcheck.o: zb_zbotcheck.c g_local.h q_shared.h game.h
 
--include dependencies
+.PHONY: all build_release build_debug clean
